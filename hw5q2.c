@@ -14,13 +14,13 @@ void PrintShortestPathMessage();
 
 int FindShortestPath(int roads[N][N], int source, int dest, int path[N]);
 
-int ShortestPath(int roads[N][N], int start, int final, int used[N][N], int currentDist, int minDist);
+int ShortestPath(int roads[N][N], int start, int final, bool used[N][N], int currentDist, int minDist);
 
-void CopyIntArr(int source[N][N], int dest[N][N]);
+void CopyBoolArr(bool source[N][N], bool dest[N][N]);
 
-void PrintIntArr(int arr[N][N]);
+void PrintBoolArr(bool arr[N][N]);
 
-void PrintCurrentRoute(int arr[N][N]);
+void PrintCurrentRoute(bool arr[N][N], int source);
 
 void PrintNumber(int num);
 
@@ -57,51 +57,54 @@ int main() {
 }
 
 int FindShortestPath(int roads[N][N], int source, int dest, int path[N]) {
-    int used[N][N] = {{-1}};
+    bool used[N][N] = {{false}};
     int result = ShortestPath(roads, source, dest, used, 0, roads[source][dest]);
-    PrintIntArr(used);
+//    bool test[N][N] = {{false, false, false, true},
+//            {false, false, false, false},
+//            {false, false, false, false},
+//            {false, true,  false, false}};
+//    printf("start at city %d\n", source);
+    PrintCurrentRoute(used, source);
     return result;
 }
 
-void PrintIntArr(int arr[N][N]) {
+void PrintBoolArr(bool arr[N][N]) {
     for (int i = 0; i < N; ++i) {
         for (int j = 0; j < N; ++j) {
-            if (arr[i][j] != 0) {
+            if (arr[i][j]) {
                 printf("Should pass through city %d %d\n", i, j);
             }
         }
     }
 }
 
-int ShortestPath(int roads[N][N], int start, int final, int used[N][N], int currentDist, int minDist) {
+int ShortestPath(int roads[N][N], int start, int final, bool used[N][N], int currentDist, int minDist) {
     if (start == final) {
-        return 0;
+        return currentDist;
     }
 
-    int tempUsed[N][N] = {{-1}};
-    CopyIntArr(used, tempUsed);
+    bool tempUsed[N][N] = {{false}};
+    CopyBoolArr(used, tempUsed);
 
     for (int j = 0; j < N; j++) {
-        if (tempUsed[start][j] == -1) {
+        // Setting current distance
+        if (!tempUsed[start][j]) {
             currentDist += roads[start][j];
-            tempUsed[start][j] = j;
+            tempUsed[start][j] = true;
             int receivedDist = ShortestPath(roads, j, final, tempUsed, currentDist, minDist);
-            receivedDist += currentDist;
-            //PrintCurrentRoute(tempUsed);
             if (receivedDist < minDist) {
-                // Found new minimum distance
-                CopyIntArr(tempUsed, used);
+                CopyBoolArr(tempUsed, used);
                 minDist = receivedDist;
             }
             currentDist -= roads[start][j];
-            tempUsed[start][j] = -1;
+            tempUsed[start][j] = false;
         }
     }
 
     return minDist;
 }
 
-void CopyIntArr(int source[N][N], int dest[N][N]) {
+void CopyBoolArr(bool source[N][N], bool dest[N][N]) {
     for (int i = 0; i < N; ++i) {
         for (int j = 0; j < N; ++j) {
             dest[i][j] = source[i][j];
@@ -109,12 +112,16 @@ void CopyIntArr(int source[N][N], int dest[N][N]) {
     }
 }
 
-void PrintCurrentRoute(int arr[N][N]) {
-    for (int i = 0; i < N; ++i) {
-        for (int j = 0; j < N; ++j) {
-            if (arr[i][j] != -1) {
-                printf("Passed through city %d\n", arr[i][j]);
-            }
+void PrintCurrentRoute(bool arr[N][N], int source) {
+    for (int j = 0; j < N; ++j) {
+        if (source == j && arr[source][j]) {
+            printf("Passed through city: %d\n", j);
+            continue;
+        }
+        if (arr[source][j]) {
+            printf("Passed through city: %d\n", j);
+            PrintCurrentRoute(arr, j);
+            break;
         }
     }
 }
