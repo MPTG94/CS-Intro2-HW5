@@ -1,0 +1,14 @@
+..\cmake-build-debug-mingw\hw5q1.exe < .\hw5q1in1.txt > .\q1out1.txt
+..\cmake-build-debug-mingw\hw5q1.exe < .\hw5q1in2.txt > .\q1out2.txt
+..\cmake-build-debug-mingw\hw5q1.exe < .\hw5q1in3.txt > .\q1out3.txt
+..\cmake-build-debug-mingw\hw5q1.exe < .\hw5q1in4.txt > .\q1out4.txt
+
+..\cmake-build-debug-mingw\hw5q2.exe < .\hw5q2in1.txt > .\q2out1.txt
+..\cmake-build-debug-mingw\hw5q2.exe < .\hw5q2in2.txt > .\q2out2.txt
+..\cmake-build-debug-mingw\hw5q2.exe < .\hw5q2in3.txt > .\q2out3.txt
+..\cmake-build-debug-mingw\hw5q2.exe < .\hw5q2in4.txt > .\q2out4.txt
+
+..\cmake-build-debug-mingw\hw5q3.exe < .\hw5q3in1.txt > .\q3out1.txt
+..\cmake-build-debug-mingw\hw5q3.exe < .\hw5q3in2.txt > .\q3out2.txt
+..\cmake-build-debug-mingw\hw5q3.exe < .\hw5q3in3.txt > .\q3out3.txt
+..\cmake-build-debug-mingw\hw5q3.exe < .\hw5q3in4.txt > .\q3out4.txt

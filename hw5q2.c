@@ -12,15 +12,15 @@ void PrintDestinationCityMessage();
 
 void PrintShortestPathMessage();
 
-int FindShortestPath(int roads[N][N], int source, int dest, int path[N]);
+int FindShortestPath(int roads[N][N], int source, int dest);
 
-int ShortestPath(int roads[N][N], int start, int final, bool used[N][N], int currentDist, int minDist);
+int ShortestPath(int roads[N][N], int start, int final, bool used[N][N], int currentDist, int minDist, bool passed[N]);
 
 void CopyBoolArr(bool source[N][N], bool dest[N][N]);
 
 void PrintBoolArr(bool arr[N][N]);
 
-void PrintCurrentRoute(bool arr[N][N], int source);
+void PrintCurrentRoute(bool arr[N][N], int source, int dest);
 
 void PrintNumber(int num);
 
@@ -29,7 +29,6 @@ void PrintWhiteSpace();
 int main() {
     setbuf(stdout, 0);
     int roads[N][N] = {{0}};
-    int path[N] = {0};
 
     PrintWelcomeMessage();
     for (int i = 0; i < N; ++i) {
@@ -48,22 +47,27 @@ int main() {
     scanf("%d", &dest);
 
     int pathLength = 0;
-    pathLength = FindShortestPath(roads, source, dest, path);
+    pathLength = FindShortestPath(roads, source, dest);
 
-    PrintShortestPathMessage();
+    //PrintShortestPathMessage();
 
 
     return 0;
 }
 
-int FindShortestPath(int roads[N][N], int source, int dest, int path[N]) {
+int FindShortestPath(int roads[N][N], int source, int dest) {
     bool used[N][N] = {{false}};
-    int result = ShortestPath(roads, source, dest, used, 0, -1);
-    PrintCurrentRoute(used, source);
+    bool passed[N] = {false};
+    passed[source] = true;
+    int result = ShortestPath(roads, source, dest, used, 0, -1 , passed);
+    PrintShortestPathMessage();
+    PrintNumber(source);
+    PrintWhiteSpace();
+    PrintCurrentRoute(used, source, dest);
     return result;
 }
 
-int ShortestPath(int roads[N][N], int start, int final, bool used[N][N], int currentDist, int minDist) {
+int ShortestPath(int roads[N][N], int start, int final, bool used[N][N], int currentDist, int minDist, bool passed[N]) {
     if (start == final) {
         return currentDist;
     }
@@ -72,18 +76,26 @@ int ShortestPath(int roads[N][N], int start, int final, bool used[N][N], int cur
     CopyBoolArr(used, tempUsed);
 
     for (int j = 0; j < N; j++) {
-        // Setting current distance
-        if (!tempUsed[start][j]) {
-            currentDist += roads[start][j];
-            tempUsed[start][j] = true;
-            int receivedDist = ShortestPath(roads, j, final, tempUsed, currentDist, minDist);
-            if (receivedDist < minDist || minDist == -1) {
-                CopyBoolArr(tempUsed, used);
-                minDist = receivedDist;
-            }
-            currentDist -= roads[start][j];
-            tempUsed[start][j] = false;
+        if (start == j) {
+            continue;
         }
+        // Setting current distance
+        if (!passed[j]) {
+            if (!tempUsed[start][j]) {
+                passed[j] = true;
+                currentDist += roads[start][j];
+                tempUsed[start][j] = true;
+                int receivedDist = ShortestPath(roads, j, final, tempUsed, currentDist, minDist, passed);
+                if (receivedDist < minDist || minDist == -1) {
+                    CopyBoolArr(tempUsed, used);
+                    minDist = receivedDist;
+                }
+                currentDist -= roads[start][j];
+                passed[j] = false;
+                tempUsed[start][j] = false;
+            }
+        }
+
     }
 
     return minDist;
@@ -97,15 +109,18 @@ void CopyBoolArr(bool source[N][N], bool dest[N][N]) {
     }
 }
 
-void PrintCurrentRoute(bool arr[N][N], int source) {
+void PrintCurrentRoute(bool arr[N][N], int source, int dest) {
     for (int j = 0; j < N; ++j) {
-        if (source == j && arr[source][j]) {
-            printf("origin city: %d\n", j);
-            continue;
-        }
+//        if (source == j && arr[source][j]) {
+//            printf("origin city: %d\n", j);
+//            continue;
+//        }
         if (arr[source][j]) {
-            printf("Passed through city: %d\n", j);
-            PrintCurrentRoute(arr, j);
+            PrintNumber(j);
+            if (j != dest) {
+                PrintWhiteSpace();
+            }
+            PrintCurrentRoute(arr, j, dest);
             break;
         }
     }
