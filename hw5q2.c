@@ -58,24 +58,9 @@ int main() {
 
 int FindShortestPath(int roads[N][N], int source, int dest, int path[N]) {
     bool used[N][N] = {{false}};
-    int result = ShortestPath(roads, source, dest, used, 0, roads[source][dest]);
-//    bool test[N][N] = {{false, false, false, true},
-//            {false, false, false, false},
-//            {false, false, false, false},
-//            {false, true,  false, false}};
-//    printf("start at city %d\n", source);
+    int result = ShortestPath(roads, source, dest, used, 0, -1);
     PrintCurrentRoute(used, source);
     return result;
-}
-
-void PrintBoolArr(bool arr[N][N]) {
-    for (int i = 0; i < N; ++i) {
-        for (int j = 0; j < N; ++j) {
-            if (arr[i][j]) {
-                printf("Should pass through city %d %d\n", i, j);
-            }
-        }
-    }
 }
 
 int ShortestPath(int roads[N][N], int start, int final, bool used[N][N], int currentDist, int minDist) {
@@ -92,7 +77,7 @@ int ShortestPath(int roads[N][N], int start, int final, bool used[N][N], int cur
             currentDist += roads[start][j];
             tempUsed[start][j] = true;
             int receivedDist = ShortestPath(roads, j, final, tempUsed, currentDist, minDist);
-            if (receivedDist < minDist) {
+            if (receivedDist < minDist || minDist == -1) {
                 CopyBoolArr(tempUsed, used);
                 minDist = receivedDist;
             }
@@ -115,13 +100,23 @@ void CopyBoolArr(bool source[N][N], bool dest[N][N]) {
 void PrintCurrentRoute(bool arr[N][N], int source) {
     for (int j = 0; j < N; ++j) {
         if (source == j && arr[source][j]) {
-            printf("Passed through city: %d\n", j);
+            printf("origin city: %d\n", j);
             continue;
         }
         if (arr[source][j]) {
             printf("Passed through city: %d\n", j);
             PrintCurrentRoute(arr, j);
             break;
+        }
+    }
+}
+
+void PrintBoolArr(bool arr[N][N]) {
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < N; ++j) {
+            if (arr[i][j]) {
+                printf("Should pass through city %d %d\n", i, j);
+            }
         }
     }
 }
